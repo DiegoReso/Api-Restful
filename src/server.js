@@ -11,9 +11,8 @@ const app = express()
 //conexao com banco de dados
 db.connect()//
 
-
-//habilita server para receber dados via post (formulario)
-app.use(express.urlencoded({extended:true}))
+//habilita server para receber dados json
+app.use(express.json())
 
 
 //definindo as rotasrotas

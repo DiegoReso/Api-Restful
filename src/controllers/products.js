@@ -41,6 +41,27 @@ async function post(req,res){
 
 async function put(req,res){
 
+  const {id} = req.params
+
+  //nesse metodo retorna os produtos atualizados
+  const product = await ProductsModel.findOneAndUpdate({_id: id} , req.body, {new:true})
+
+  res.send({
+       message: 'success',
+       product,
+     })
+
+
+  //desse jeito funciona mas no retorno do product ele retorna o produto antigo
+  // const product = await ProductsModel.findOne({_id: id})  
+
+  // await product.updateOne(req.body)
+
+  // res.send({
+  //   message: 'success',
+  //   product,
+  // })
+
 }
 
 

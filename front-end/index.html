@@ -5,6 +5,15 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Front-End</title>
+
+  <style>
+
+    .hidden{
+      display: none;
+    }
+  </style>
+
+
 </head>
 <body>
 
@@ -41,15 +50,106 @@
 
 
 
+  <div id="edit" class="hidden">
+    <h2>Alterar produto</h2>
+    <form id="formEdit">
+      <input type="hidden" name="id">
+      <div>
+        <label for="name">Nome</label>
+        <input type="text" name="name" id="name">
+      </div>
+  
+      <div>
+        <label for="brand">Marca</label>
+        <input type="text" name="brand" id="brand">
+      </div>
+  
+      <div>
+        <label for="price">Preco</label>
+        <input type="text" name="price" id="price">
+      </div>
+      
+      <div>
+        <button type="submit">Alterar</button>
+      </div>
+  
+    </form>
+  
+  </div>
+
+
 
 
   <script>
+
+
 
   const apiUrl = 'http://127.0.0.1:8080/api/products'
 
   const form = document.querySelector('#form')
   
   const list = document.querySelector('#products-list')
+
+  const edit = document.querySelector('#edit')
+
+  const formEdit = document.querySelector('#formEdit')
+
+    function adicionaBotaoExcluir(){
+      const botoesExcluir = document.querySelectorAll('.botao-excluir')
+
+        botoesExcluir.forEach(botao =>{
+          botao.onclick = function(e){
+            e.preventDefault()
+
+            const id = this.dataset.id
+            
+
+            fetch(`${apiUrl}/${id}`,{
+              method: 'DELETE',
+            })
+            .then(res => res.json())
+            .then(data => {
+              if(data.message === 'success'){
+                obterLista()
+                form.reset()
+                alert('Cadastrado removido com sucesso')
+                }else{
+                alert('Ops Ocorreu um erro')
+                }
+              })
+
+          }
+        })
+
+    }
+
+
+    function adicionaBotaoEditar(){
+      const botoesEditar = document.querySelectorAll('.botao-editar')
+
+        botoesEditar.forEach(botao =>{
+          botao.onclick = function(e){
+            e.preventDefault()
+
+            edit.classList.remove('hidden')
+
+            const id = this.dataset.id
+            const name = this.dataset.name
+            const brand = this.dataset.brand
+            const price = this.dataset.price
+
+            document.forms['formEdit'].id.value = id
+            document.forms['formEdit'].name.value = name
+            document.forms['formEdit'].brand.value = brand
+            document.forms['formEdit'].price.value = price
+
+          }
+        })
+
+    }
+
+
+
 
     function obterLista(){
 
@@ -59,12 +159,29 @@
 
         const productsHtml = data.map(product =>`
         <li>
-        ${product.name} - ${product.brand} - ${product.price}
-        </li> 
-        `).join('')
+        ${product.name} - ${product.brand} - ${product.price} - 
+        <a 
+        href="#" 
+        class="botao-excluir" 
+        data-id="${product._id}" 
+        
+        >[excluir]
+        </a>
+
+        <a href="#"
+          class="botao-editar" 
+          data-id="${product._id}"
+          data-name="${product.name}"
+          data-brand="${product.brand}" 
+          data-price="${product.price}"
+         >[editar] 
+         </a>
+        </li> `).join('')
         
         list.innerHTML = productsHtml
     
+        adicionaBotaoExcluir()
+        adicionaBotaoEditar()
       })
     }
       
@@ -102,6 +219,48 @@
         }
       })
     }
+
+
+    formEdit.onsubmit = function(e){
+      e.preventDefault()
+
+
+  
+      const id = document.forms['formEdit'].id.value
+
+      const name = document.forms['formEdit'].name.value
+
+      const brand = document.forms['formEdit'].brand.value
+
+      const price = document.forms['formEdit'].price.value
+
+
+        
+
+          fetch(`${apiUrl}/${id}`,{
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+             id,
+             name,
+             brand,
+             price, 
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if(data.message === 'success'){
+              obterLista()
+              formEdit.reset()
+              edit.classList.add('hidden')
+              alert('Cadastrado alterado com sucesso')
+              }else{
+              alert('Ops Ocorreu um erro')
+              }
+            })
+              } 
 
   </script>
 

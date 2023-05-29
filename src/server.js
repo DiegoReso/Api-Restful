@@ -1,5 +1,5 @@
 const express = require('express')
-const path = require ('path')
+const cors = require('cors')
 
 
 const db = require('./database/db')
@@ -10,6 +10,31 @@ const app = express()
 
 //conexao com banco de dados
 db.connect()//
+
+//habilita CORS para qq endereco
+//app.use(cors())
+
+//habilita CORS para somente alguns enderecos
+const allowedOrigins = [
+  'http://127.0.0.1:5500',
+  'http://www.app.com.br',
+]
+
+
+app.use(cors({
+  origin: function(origin,callback){
+    let allowed = true
+
+    if(!origin) allowed = true
+
+    if(!allowedOrigins.includes(origin)) allowed = false
+
+
+    callback(null, allowed)
+
+  }
+}))
+
 
 //habilita server para receber dados json
 app.use(express.json())

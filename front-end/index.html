@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Front-End</title>
+</head>
+<body>
+
+    <h1>Listagem de Produtos</h1>
+
+  <ul id="products-list">
+  </ul>
+
+  <hr>
+
+  <h2>Cadastro de Produtos</h2>
+
+  <form id="form">
+    <div>
+      <label for="name">Nome</label>
+      <input type="text" name="name" id="name">
+    </div>
+
+    <div>
+      <label for="brand">Marca</label>
+      <input type="text" name="brand" id="brand">
+    </div>
+
+    <div>
+      <label for="price">Preco</label>
+      <input type="text" name="price" id="price">
+    </div>
+    
+    <div>
+      <button type="submit">Cadastrar</button>
+    </div>
+
+  </form>
+
+
+
+
+
+  <script>
+
+  const apiUrl = 'http://127.0.0.1:8080/api/products'
+
+  const form = document.querySelector('#form')
+  
+  const list = document.querySelector('#products-list')
+
+    function obterLista(){
+
+      fetch(apiUrl)
+      .then(res => res.json())
+      .then(data =>{
+
+        const productsHtml = data.map(product =>`
+        <li>
+        ${product.name} - ${product.brand} - ${product.price}
+        </li> 
+        `).join('')
+        
+        list.innerHTML = productsHtml
+    
+      })
+    }
+      
+    obterLista()
+
+    form.onsubmit = function(e){
+      e.preventDefault()
+
+      const name = document.forms['form'].name.value
+
+      const brand = document.forms['form'].brand.value
+
+      const price = document.forms['form'].price.value
+
+      fetch(apiUrl,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          brand,
+          price,
+        })
+      })
+      .then(response => response.json())
+      .then(data =>{
+
+        if(data.message === 'success'){
+          obterLista()
+          form.reset()
+          alert('Cadastrado realizado com sucesso')
+        }else{
+          alert('Ops Ocorreu um erro')
+        }
+      })
+    }
+
+  </script>
+
+</body>
+</html>

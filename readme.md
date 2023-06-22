@@ -1,4 +1,4 @@
-Projeto dos meus Estudos de API RESTRFULL
+Projeto dos meus Estudos de API RESTFULL
 
 
 MongoDB
